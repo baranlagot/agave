@@ -1,4 +1,3 @@
-using PuzzleLogic;
 
 namespace BoardLogic
 {

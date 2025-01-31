@@ -1,4 +1,4 @@
-namespace PuzzleLogic
+namespace BoardLogic
 {
     public interface IBoardItem
     {

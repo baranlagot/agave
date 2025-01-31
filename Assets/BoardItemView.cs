@@ -1,6 +1,5 @@
-using PuzzleLogic;
+using BoardLogic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class BoardItemView : MonoBehaviour, IBoardItemView
 {

@@ -1,5 +1,5 @@
-using PuzzleLogic;
 using UnityEngine;
+using BoardLogic;
 
 public class BoardItemViewFactory : IBoardItemViewFactory
 {

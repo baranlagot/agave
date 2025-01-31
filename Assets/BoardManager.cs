@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using BoardLogic;
-using PuzzleLogic;
 using UnityEngine;
 
 public class BoardManager : MonoBehaviour

@@ -1,4 +1,4 @@
-using PuzzleLogic;
+using BoardLogic;
 
 public interface IBoardItemView
 {
