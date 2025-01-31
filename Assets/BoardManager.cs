@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using BoardLogic;
@@ -60,11 +61,63 @@ public class BoardManager : MonoBehaviour, ICommandContext
         Instantiate(backgroundTilePrefab, worldPosition, Quaternion.identity, transform);
     }
 
-    private Vector3 GetCellWorldPosition(int x, int y)
+    internal Vector3 GetCellWorldPosition(int x, int y)
     {
         //-y on z axis for 2D view
         return new Vector3(x * boardItemSize - xOffset, y * boardItemSize - yOffset, -y);
     }
+
+    public BoardCell? GetBoardCellFromMousePosition(Vector3 mousePosition)
+    {
+        var boardPosition = GetClosestCellPosition(mousePosition);
+        if (boardPosition.x < 0 || boardPosition.x >= width || boardPosition.y < 0 || boardPosition.y >= height)
+        {
+            return null;
+        }
+
+        return board.GetCell(boardPosition.x, boardPosition.y);
+    }
+
+    public Board GetBoard()
+    {
+        return board;
+    }
+
+
+    public (int x, int y) GetClosestCellPosition(Vector3 worldPos)
+    {
+        (int, int) closestCell = (-1, -1);
+        var minDist = float.MaxValue;
+        var threshold = boardItemSize * boardItemSize;
+
+        foreach (var item in boardItemViews)
+        {
+            var cubePos = item.Value.transform.position;
+            var distSqr = ((Vector2)cubePos - (Vector2)worldPos).sqrMagnitude;
+            if (distSqr < minDist)
+            {
+                minDist = distSqr;
+                closestCell = item.Key;
+            }
+        }
+
+        if (minDist > threshold)
+        {
+            return (-1, -1);
+        }
+
+        return closestCell;
+    }
+
+    public void ExecuteCommands(List<IBoardCommand> commands)
+    {
+        foreach (var command in commands)
+        {
+            command.Execute(this);
+        }
+    }
+
+    //-----------------------------Command context implementation--------------------------------
 
     public void DestoryBoardItem((int x, int y) position)
     {

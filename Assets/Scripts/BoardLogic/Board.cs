@@ -34,7 +34,7 @@ namespace BoardLogic
                 {
                     var color = (BoardItemColor)(rnd.Next(0, colorCount));
                     var cube = new DefaultBoardItem(color);
-                    cells[x, y] = new BoardCell(cube);
+                    cells[x, y] = new BoardCell(cube, (x, y));
                 }
             }
         }
@@ -51,7 +51,7 @@ namespace BoardLogic
                 for (int y = 0; y < Height; y++)
                 {
                     var cube = new DefaultBoardItem(colors[x, y]);
-                    cells[x, y] = new BoardCell(cube);
+                    cells[x, y] = new BoardCell(cube, (x, y));
                 }
             }
         }

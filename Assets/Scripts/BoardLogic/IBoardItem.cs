@@ -4,7 +4,6 @@ namespace BoardLogic
     {
         public string Name { get; }
         BoardItemColor Color { get; }
-        bool IsPowerUp { get; }
         public IBoardItem Clone();
     }
 
