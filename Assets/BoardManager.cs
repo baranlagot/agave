@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using BoardLogic;
 using UnityEngine;
 
-public class BoardManager : MonoBehaviour
+public class BoardManager : MonoBehaviour, ICommandContext
 {
     [SerializeField] private int width = 8;
     [SerializeField] private int height = 8;
@@ -66,4 +66,33 @@ public class BoardManager : MonoBehaviour
         return new Vector3(x * boardItemSize - xOffset, y * boardItemSize - yOffset, -y);
     }
 
+    public void DestoryBoardItem((int x, int y) position)
+    {
+        if (boardItemViews.TryGetValue(position, out var boardItemView))
+        {
+            boardItemView.Factory.ReleaseObject(boardItemView);
+            boardItemViews.Remove(position);
+        }
+    }
+
+    public void MoveBoardItem((int x, int y) from, (int x, int y) to)
+    {
+        if (boardItemViews.TryGetValue(from, out var boardItemView))
+        {
+            var targetPosition = GetCellWorldPosition(to.x, to.y);
+            boardItemView.MoveTo(targetPosition);
+            boardItemViews.Remove(from);
+            boardItemViews[to] = boardItemView;
+        }
+    }
+
+    public void CreateBoardItem((int x, int y) position, IBoardItem boardItem)
+    {
+        CreateBoardItemViewAt(position.x, position.y, boardItem);
+    }
+
+    public void AddDelay(float seconds)
+    {
+        //TODO: add delay command
+    }
 }
