@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using BoardLogic;
 using UnityEngine;
 
@@ -123,6 +124,7 @@ public class BoardManager : MonoBehaviour, ICommandContext
     {
         if (boardItemViews.TryGetValue(position, out var boardItemView))
         {
+            board.SetCell(position.x, position.y, new BoardCell(null, position));
             boardItemView.Factory.ReleaseObject(boardItemView);
             boardItemViews.Remove(position);
         }
@@ -136,6 +138,7 @@ public class BoardManager : MonoBehaviour, ICommandContext
             boardItemView.MoveTo(targetPosition);
             boardItemViews.Remove(from);
             boardItemViews[to] = boardItemView;
+            board.SetCell(to.x, to.y, new BoardCell(boardItemView.BoardItem, to));
         }
     }
 

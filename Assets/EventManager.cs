@@ -1,49 +1,37 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor.Timeline.Actions;
-
 public static class EventManager
 {
+    private static readonly Dictionary<Type, Delegate> events = new Dictionary<Type, Delegate>();
 
-    private static Dictionary<Type, Action<IEvent>> events;
-
-    public static void Publish<T>(T data) where T : IEvent
+    public static void Subscribe<T>(Action<T> handler) where T : IEvent
     {
-        if (events == null)
+        if (events.TryGetValue(typeof(T), out Delegate existingHandlers))
         {
-            return;
+            events[typeof(T)] = Delegate.Combine(existingHandlers, handler);
         }
-        if (!events.ContainsKey(typeof(T)))
+        else
         {
-            return;
+            events[typeof(T)] = handler;
         }
-        events[typeof(T)]?.Invoke(data);
     }
 
-    public static void Subscribe<T>(Action<T> action) where T : IEvent
+    public static void Unsubscribe<T>(Action<T> handler) where T : IEvent
     {
-        if (events == null)
+        if (events.TryGetValue(typeof(T), out Delegate existingHandlers))
         {
-            events = new Dictionary<Type, Action<IEvent>>();
+            events[typeof(T)] = Delegate.Remove(existingHandlers, handler);
         }
-        if (!events.ContainsKey(typeof(T)))
-        {
-            events.Add(typeof(T), null);
-        }
-        events[typeof(T)] = events[typeof(T)] + (Action<IEvent>)(e => action((T)e));
     }
 
-    public static void Unsubscribe<T>(Action<T> action) where T : IEvent
+    public static void Publish<T>(T eventData) where T : IEvent
     {
-        if (events == null)
+        if (events.TryGetValue(typeof(T), out Delegate handler))
         {
-            return;
+            if (handler is Action<T> action)
+            {
+                action(eventData);
+            }
         }
-        if (!events.ContainsKey(typeof(T)))
-        {
-            return;
-        }
-        events[typeof(T)] = events[typeof(T)] - (Action<IEvent>)(e => action((T)e));
     }
-
 }

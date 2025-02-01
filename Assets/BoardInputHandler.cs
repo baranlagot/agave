@@ -43,6 +43,8 @@ public class BoardInputHandler : MonoBehaviour
             {
                 var commands = SelectionResultConverter.ConvertToSelectionResult(selectedItems);
                 boardManager.ExecuteCommands(commands);
+                var gravityCommands = GravitySystem.ApplyGravity(boardManager.GetBoard());
+                boardManager.ExecuteCommands(gravityCommands);
             }
             selectedItems.Clear();
             selectedCellWorldPositions.Clear();
