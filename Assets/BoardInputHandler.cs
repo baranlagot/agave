@@ -41,11 +41,9 @@ public class BoardInputHandler : MonoBehaviour
         {
             if (selectedItems.Count >= minSelectionCount)
             {
-                var commands = SelectionResultConverter.ConvertToSelectionResult(selectedItems);
-                boardManager.ExecuteCommands(commands);
-                var gravityCommands = GravitySystem.ApplyGravity(boardManager.GetBoard());
-                boardManager.ExecuteCommands(gravityCommands);
+                OnSelectionValid();
             }
+
             selectedItems.Clear();
             selectedCellWorldPositions.Clear();
         }
@@ -54,6 +52,18 @@ public class BoardInputHandler : MonoBehaviour
     private void LateUpdate()
     {
         LineDrawer.DrawLine(selectedCellWorldPositions);
+    }
+
+    private void OnSelectionValid()
+    {
+        var commands = SelectionResultConverter.ConvertToSelectionResult(selectedItems);
+        boardManager.ExecuteCommands(commands);
+
+        var gravityCommands = GravitySystem.ApplyGravity(boardManager.GetBoard());
+        boardManager.ExecuteCommands(gravityCommands);
+
+        var refillCommands = RefillSystem.ApplyRefill(boardManager.GetBoard());
+        boardManager.ExecuteCommands(refillCommands);
     }
 
 }

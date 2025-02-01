@@ -40,3 +40,24 @@ public class MoveCommand : IBoardCommand
         context.MoveBoardItem(from, to);
     }
 }
+
+public class RefillBoardCommand : IBoardCommand
+{
+    private (int x, int y) finalGridPos;
+    private IBoardItem boardItem;
+    private float spawnY;
+    public string LogMessage => $"Create falling cube at {finalGridPos}";
+
+    public RefillBoardCommand((int x, int y) finalGridPos, IBoardItem boardItem, float spawnY)
+    {
+        this.finalGridPos = finalGridPos;
+        this.boardItem = boardItem;
+        this.spawnY = spawnY;
+    }
+
+
+    public void Execute(ICommandContext context)
+    {
+        context.CreateBoardItem(finalGridPos, boardItem);
+    }
+}

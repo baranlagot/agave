@@ -6,5 +6,6 @@ namespace BoardLogic
         void MoveBoardItem((int x, int y) from, (int x, int y) to);
         void CreateBoardItem((int x, int y) position, IBoardItem boardItem);
         void AddDelay(float seconds);
+        void RefillBoard((int x, int y) finalPos, IBoardItem boardItem, float spawnY);
     }
 }

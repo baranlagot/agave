@@ -1,7 +1,4 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using BoardLogic;
 using UnityEngine;
 
@@ -151,4 +148,12 @@ public class BoardManager : MonoBehaviour, ICommandContext
     {
         //TODO: add delay command
     }
+
+    public void RefillBoard((int x, int y) finalPos, IBoardItem boardItem, float spawnY)
+    {
+        var boardItemView = CreateBoardItemViewAt(finalPos.x, finalPos.y, boardItem);
+        boardItemView.SetPosition(spawnY);
+        boardItemView.MoveTo(GetCellWorldPosition(finalPos.x, finalPos.y));
+    }
+
 }
