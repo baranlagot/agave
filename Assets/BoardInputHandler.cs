@@ -16,12 +16,10 @@ public class BoardInputHandler : MonoBehaviour
         {
             var mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             var boardCell = boardManager.GetBoardCellFromMousePosition(mousePos);
-            Debug.Log("VSVV");
             if (!boardCell.HasValue)
             {
                 return;
             }
-            Debug.Log("ASDASD");
 
             var boardCellValue = boardCell.Value;
             BoardCell? lastSelectedCell = selectedItems.Count > 0 ? selectedItems.Peek() : (BoardCell?)null;
@@ -29,6 +27,14 @@ public class BoardInputHandler : MonoBehaviour
             {
                 selectedItems.Push(boardCellValue);
                 selectedCellWorldPositions.Push(boardManager.GetCellWorldPosition(boardCellValue.BoardPosition.x, boardCellValue.BoardPosition.y));
+            }
+            else if (selectedItems.Contains(boardCellValue))
+            {
+                if (!selectedItems.Peek().Equals(boardCellValue))
+                {
+                    selectedItems.Pop();
+                    selectedCellWorldPositions.Pop();
+                }
             }
         }
         else if (Input.GetMouseButtonUp(0))
@@ -41,7 +47,6 @@ public class BoardInputHandler : MonoBehaviour
             selectedItems.Clear();
             selectedCellWorldPositions.Clear();
         }
-        Debug.Log("Selected items: " + selectedItems.Count);
     }
 
     private void LateUpdate()
