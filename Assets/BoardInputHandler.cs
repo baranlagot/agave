@@ -56,6 +56,7 @@ public class BoardInputHandler : MonoBehaviour
 
     private void OnSelectionValid()
     {
+        //convert selected items to commands, first execute deletion commands
         var commands = SelectionResultConverter.ConvertToSelectionResult(selectedItems);
         boardManager.ExecuteCommands(commands);
 
@@ -64,6 +65,7 @@ public class BoardInputHandler : MonoBehaviour
 
         var refillCommands = RefillSystem.ApplyRefill(boardManager.GetBoard());
         boardManager.ExecuteCommands(refillCommands);
+
     }
 
 }

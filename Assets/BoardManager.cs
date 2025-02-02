@@ -132,7 +132,7 @@ public class BoardManager : MonoBehaviour, ICommandContext
         if (boardItemViews.TryGetValue(from, out var boardItemView))
         {
             var targetPosition = GetCellWorldPosition(to.x, to.y);
-            boardItemView.MoveTo(targetPosition);
+            boardItemView.MoveTo(targetPosition, 0f);
             boardItemViews.Remove(from);
             boardItemViews[to] = boardItemView;
             board.SetCell(to.x, to.y, new BoardCell(boardItemView.BoardItem, to));
@@ -152,8 +152,8 @@ public class BoardManager : MonoBehaviour, ICommandContext
     public void RefillBoard((int x, int y) finalPos, IBoardItem boardItem, float spawnY)
     {
         var boardItemView = CreateBoardItemViewAt(finalPos.x, finalPos.y, boardItem);
-        boardItemView.SetPosition(spawnY);
-        boardItemView.MoveTo(GetCellWorldPosition(finalPos.x, finalPos.y));
+        boardItemView.SetPosition(spawnY + finalPos.y * boardItemSize);
+        boardItemView.MoveTo(GetCellWorldPosition(finalPos.x, finalPos.y), 0f);
     }
 
 }

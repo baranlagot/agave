@@ -1,5 +1,6 @@
 using BoardLogic;
 using UnityEngine;
+using DG.Tweening;
 
 public class BoardItemView : MonoBehaviour, IBoardItemView
 {
@@ -20,9 +21,19 @@ public class BoardItemView : MonoBehaviour, IBoardItemView
         transform.position = new Vector3(transform.position.x, y, transform.position.z);
     }
 
-    public void MoveTo(Vector3 to)
+    public void MoveTo(Vector3 to, float delay)
     {
-        transform.position = to;
+        var initialDelay = delay;
+        var fallDuration = 0.1f;
+        var bounceOvershoot = 0.1f;
+        var bounceDuration = 0.05f;
+
+        Sequence sequence = DOTween.Sequence();
+        sequence.AppendInterval(initialDelay);
+        sequence.Append(transform.DOMove(to, fallDuration).SetEase(Ease.InQuad));
+        Vector3 upPos = to + Vector3.up * bounceOvershoot;
+        sequence.Append(transform.DOMove(upPos, bounceDuration / 2).SetEase(Ease.OutQuad));
+        sequence.Append(transform.DOMove(to, bounceDuration / 2).SetEase(Ease.InQuad));
     }
 
     private void LoadSprite()
