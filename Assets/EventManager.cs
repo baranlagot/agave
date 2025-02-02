@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
 public static class EventManager
 {
     private static readonly Dictionary<Type, Delegate> events = new Dictionary<Type, Delegate>();

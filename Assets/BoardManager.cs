@@ -8,6 +8,8 @@ public class BoardManager : MonoBehaviour, ICommandContext
     [SerializeField] private int height = 8;
     [SerializeField] private BoardItemView boardItemViewPrefab;
     [SerializeField] private GameObject backgroundTilePrefab;
+    [SerializeField] private FeedbackPlayer feedbackPlayer;
+    [SerializeField] private ParticleFeedback particleFeedback;
 
     private Dictionary<(int, int), BoardItemView> boardItemViews = new Dictionary<(int, int), BoardItemView>();
 
@@ -107,6 +109,23 @@ public class BoardManager : MonoBehaviour, ICommandContext
         return closestCell;
     }
 
+    public static Color GetColorFromBoardItem(IBoardItem boardItem)
+    {
+        switch (boardItem.Color)
+        {
+            case BoardItemColor.Blue:
+                return Color.blue;
+            case BoardItemColor.Green:
+                return Color.green;
+            case BoardItemColor.Red:
+                return Color.red;
+            case BoardItemColor.Yellow:
+                return Color.yellow;
+            default:
+                return Color.white;
+        }
+    }
+
     public void ExecuteCommands(List<IBoardCommand> commands)
     {
         foreach (var command in commands)
@@ -122,6 +141,8 @@ public class BoardManager : MonoBehaviour, ICommandContext
         if (boardItemViews.TryGetValue(position, out var boardItemView))
         {
             board.SetCell(position.x, position.y, new BoardCell(null, position));
+            particleFeedback.feedbackColor = GetColorFromBoardItem(boardItemView.BoardItem);
+            feedbackPlayer.Play(boardItemView.transform.position);
             boardItemView.Factory.ReleaseObject(boardItemView);
             boardItemViews.Remove(position);
         }

@@ -262,6 +262,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1526821973}
   - component: {fileID: 1526821974}
+  - component: {fileID: 1526821976}
+  - component: {fileID: 1526821975}
   m_Layer: 0
   m_Name: BoardManager
   m_TagString: Untagged
@@ -300,3 +302,31 @@ MonoBehaviour:
   height: 8
   boardItemViewPrefab: {fileID: 3545840659776017040, guid: ede94c67226e6d340b161994bebb8366, type: 3}
   backgroundTilePrefab: {fileID: 2420849714446254354, guid: acca846f9a3f83b45bca9990e1c20199, type: 3}
+  feedbackPlayer: {fileID: 1526821976}
+  particleFeedback: {fileID: 1526821975}
+--- !u!114 &1526821975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1526821972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e077aab457af916429da7587e30a074b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  feedbackColor: {r: 1, g: 1, b: 1, a: 1}
+  psPrefab: {fileID: 4571115718488691223, guid: ca532c322511ff24c9c2e0096d2aa4ed, type: 3}
+--- !u!114 &1526821976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1526821972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd0c9e3951ca8774b9dc5c54abe34780, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
