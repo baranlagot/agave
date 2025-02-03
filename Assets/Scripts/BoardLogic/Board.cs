@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace BoardLogic
 {
@@ -55,5 +57,64 @@ namespace BoardLogic
                 }
             }
         }
+
+        public ShuffleResults ShuffleBoard()
+        {
+            var oldPositions = new List<(int x, int y)>();
+            var newPositions = new List<(int x, int y)>();
+
+            Random rnd = new Random();
+            var positions = new HashSet<(int x, int y)>();
+
+            for (int x = 0; x < Width; x++)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    positions.Add((x, y));
+                }
+            }
+
+            for (int x = 0; x < Width; x++)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    var remainingPositions = positions.ToArray();
+                    int randomIndex = rnd.Next(0, remainingPositions.Length);
+                    var randomPos = remainingPositions[randomIndex];
+
+                    positions.Remove(randomPos);
+
+                    if ((x, y) != randomPos)
+                    {
+                        oldPositions.Add((x, y));
+                        newPositions.Add(randomPos);
+                        SwapCells((x, y), randomPos);
+                    }
+                }
+            }
+
+            return new ShuffleResults(oldPositions, newPositions);
+        }
+
+        private void SwapCells((int x, int y) first, (int x, int y) second)
+        {
+            var temp = cells[first.x, first.y];
+            cells[first.x, first.y] = cells[second.x, second.y];
+            cells[second.x, second.y] = temp;
+        }
+
     }
+}
+
+public struct ShuffleResults
+{
+    public List<(int x, int y)> oldPositions;
+    public List<(int x, int y)> newPositions;
+
+    public ShuffleResults(List<(int x, int y)> oldPositions, List<(int x, int y)> newPositions)
+    {
+        this.oldPositions = oldPositions;
+        this.newPositions = newPositions;
+    }
+
 }

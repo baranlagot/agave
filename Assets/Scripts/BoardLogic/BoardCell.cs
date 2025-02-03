@@ -14,6 +14,11 @@ namespace BoardLogic
             BoardPosition = boardPosition;
         }
 
+        public BoardCell Clone()
+        {
+            return new BoardCell(boardItem.Clone(), BoardPosition);
+        }
+
         public override readonly bool Equals(object obj)
         {
             if (obj is BoardCell cell)

@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
 using BoardLogic;
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 public class BoardManager : MonoBehaviour, ICommandContext
@@ -61,6 +64,35 @@ public class BoardManager : MonoBehaviour, ICommandContext
         Instantiate(backgroundTilePrefab, worldPosition, Quaternion.identity, transform);
     }
 
+    private void ShuffleBoard()
+    {
+        Debug.Log("Shuffling board");
+        var shuffleResults = board.ShuffleBoard();
+        ProcessShuffleResults(shuffleResults);
+    }
+
+    private void ProcessShuffleResults(ShuffleResults results)
+    {
+        var moveTime = 0.5f;
+        for (int i = 0; i < results.oldPositions.Count; i++)
+        {
+            var oldPos = results.oldPositions[i];
+            var newPos = results.newPositions[i];
+            if (boardItemViews.TryGetValue(oldPos, out var boardItemView))
+            {
+                var newBoardItemView = boardItemViews[newPos];
+                boardItemViews.Remove(oldPos);
+                boardItemViews.Remove(newPos);
+                boardItemViews[oldPos] = newBoardItemView;
+                boardItemViews[newPos] = boardItemView;
+                board.SetCell(oldPos.Item1, oldPos.Item2, new BoardCell(newBoardItemView.BoardItem, oldPos));
+                board.SetCell(newPos.Item1, newPos.Item2, new BoardCell(boardItemView.BoardItem, newPos));
+                boardItemView.MoveTo(GetCellWorldPosition(newPos.Item1, newPos.Item2), moveTime);
+                newBoardItemView.MoveTo(GetCellWorldPosition(oldPos.Item1, oldPos.Item2), moveTime);
+            }
+        }
+    }
+
     internal Vector3 GetCellWorldPosition(int x, int y)
     {
         //-y on z axis for 2D view
@@ -88,7 +120,7 @@ public class BoardManager : MonoBehaviour, ICommandContext
     {
         (int, int) closestCell = (-1, -1);
         var minDist = float.MaxValue;
-        var threshold = boardItemSize * boardItemSize;
+        var threshold = boardItemSize * boardItemSize * 0.5f;
 
         foreach (var item in boardItemViews)
         {
@@ -107,6 +139,26 @@ public class BoardManager : MonoBehaviour, ICommandContext
         }
 
         return closestCell;
+    }
+
+    public void SetSelectedItems(Stack<BoardCell> selectedItems)
+    {
+        foreach (var item in selectedItems)
+        {
+            var position = item.BoardPosition;
+            if (boardItemViews.TryGetValue(position, out var boardItemView))
+            {
+                boardItemView.SetSelected();
+            }
+        }
+    }
+
+    public void ClearSelectedItems()
+    {
+        foreach (var item in boardItemViews)
+        {
+            item.Value.SetDeselected();
+        }
     }
 
     public static Color GetColorFromBoardItem(IBoardItem boardItem)
@@ -153,7 +205,7 @@ public class BoardManager : MonoBehaviour, ICommandContext
         if (boardItemViews.TryGetValue(from, out var boardItemView))
         {
             var targetPosition = GetCellWorldPosition(to.x, to.y);
-            boardItemView.MoveTo(targetPosition, 0f);
+            boardItemView.FallTo(targetPosition, 0f);
             boardItemViews.Remove(from);
             boardItemViews[to] = boardItemView;
             board.SetCell(to.x, to.y, new BoardCell(boardItemView.BoardItem, to));
@@ -165,16 +217,19 @@ public class BoardManager : MonoBehaviour, ICommandContext
         CreateBoardItemViewAt(position.x, position.y, boardItem);
     }
 
-    public void AddDelay(float seconds)
-    {
-        //TODO: add delay command
-    }
 
     public void RefillBoard((int x, int y) finalPos, IBoardItem boardItem, float spawnY)
     {
         var boardItemView = CreateBoardItemViewAt(finalPos.x, finalPos.y, boardItem);
         boardItemView.SetPosition(spawnY + finalPos.y * boardItemSize);
-        boardItemView.MoveTo(GetCellWorldPosition(finalPos.x, finalPos.y), 0f);
+        boardItemView.FallTo(GetCellWorldPosition(finalPos.x, finalPos.y), 0f);
+
+        //after every refill, check if no more matches are possible
+        var anyLinksRemaining = LinkCheckingSystem.CheckLinks(board);
+        if (!anyLinksRemaining)
+        {
+            ShuffleBoard();
+        }
     }
 
 }

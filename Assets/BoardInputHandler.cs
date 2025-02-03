@@ -9,6 +9,7 @@ public class BoardInputHandler : MonoBehaviour
     private Stack<BoardCell> selectedItems = new Stack<BoardCell>();
     private Stack<Vector3> selectedCellWorldPositions = new Stack<Vector3>();
     private readonly int minSelectionCount = 3;
+    private Color selectionColor = Color.red;
 
     private void Update()
     {
@@ -25,17 +26,20 @@ public class BoardInputHandler : MonoBehaviour
             BoardCell? lastSelectedCell = selectedItems.Count > 0 ? selectedItems.Peek() : (BoardCell?)null;
             if (ItemSelectionChecker.CanSelectItem(boardCellValue.BoardPosition, boardManager.GetBoard(), lastSelectedCell) && !selectedItems.Contains(boardCellValue))
             {
+                selectionColor = BoardManager.GetColorFromBoardItem(boardCellValue.boardItem);
                 selectedItems.Push(boardCellValue);
                 selectedCellWorldPositions.Push(boardManager.GetCellWorldPosition(boardCellValue.BoardPosition.x, boardCellValue.BoardPosition.y));
             }
             else if (selectedItems.Contains(boardCellValue))
             {
+                boardManager.ClearSelectedItems();
                 if (!selectedItems.Peek().Equals(boardCellValue))
                 {
                     selectedItems.Pop();
                     selectedCellWorldPositions.Pop();
                 }
             }
+            boardManager.SetSelectedItems(selectedItems);
         }
         else if (Input.GetMouseButtonUp(0))
         {
@@ -43,7 +47,7 @@ public class BoardInputHandler : MonoBehaviour
             {
                 OnSelectionValid();
             }
-
+            boardManager.ClearSelectedItems();
             selectedItems.Clear();
             selectedCellWorldPositions.Clear();
         }
@@ -51,7 +55,7 @@ public class BoardInputHandler : MonoBehaviour
 
     private void LateUpdate()
     {
-        LineDrawer.DrawLine(selectedCellWorldPositions);
+        LineDrawer.DrawLine(selectedCellWorldPositions, selectionColor);
     }
 
     private void OnSelectionValid()

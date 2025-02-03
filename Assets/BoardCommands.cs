@@ -61,19 +61,3 @@ public class RefillBoardCommand : IBoardCommand
         context.RefillBoard(finalGridPos, boardItem, spawnY);
     }
 }
-
-public class DelayCommand : IBoardCommand
-{
-    private float delay;
-    public string LogMessage => $"Delay for {delay} seconds";
-
-    public DelayCommand(float delay)
-    {
-        this.delay = delay;
-    }
-
-    public void Execute(ICommandContext context)
-    {
-        context.AddDelay(delay);
-    }
-}

@@ -2,12 +2,14 @@ using BoardLogic;
 using UnityEngine;
 using DG.Tweening;
 
-public class BoardItemView : MonoBehaviour, IBoardItemView
+public class BoardItemView : MonoBehaviour, IBoardItemView, IPoolable
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
 
     public IBoardItem BoardItem { get; private set; }
     public IGameObjectFactory<BoardItemView> Factory { get; private set; }
+
+    private bool isSelected;
 
     public void Initialize(IBoardItem boardItem, IGameObjectFactory<BoardItemView> factory)
     {
@@ -21,7 +23,12 @@ public class BoardItemView : MonoBehaviour, IBoardItemView
         transform.position = new Vector3(transform.position.x, y, transform.position.z);
     }
 
-    public void MoveTo(Vector3 to, float delay)
+    public void MoveTo(Vector3 to, float duration)
+    {
+        transform.DOMove(to, duration).SetEase(Ease.Linear);
+    }
+
+    public void FallTo(Vector3 to, float delay)
     {
         var initialDelay = delay;
         var fallDuration = 0.1f;
@@ -36,6 +43,32 @@ public class BoardItemView : MonoBehaviour, IBoardItemView
         sequence.Append(transform.DOMove(to, bounceDuration / 2).SetEase(Ease.InQuad));
     }
 
+    public void SetSelected()
+    {
+        if (isSelected)
+        {
+            return;
+        }
+        else
+        {
+            isSelected = true;
+            transform.DOScale(Vector3.one * 1.05f, 0.1f);
+        }
+    }
+
+    public void SetDeselected()
+    {
+        if (!isSelected)
+        {
+            return;
+        }
+        else
+        {
+            isSelected = false;
+            transform.DOScale(Vector3.one, 0.1f);
+        }
+    }
+
     private void LoadSprite()
     {
         Debug.Log($"Loading sprite for {BoardItem.Name}");
@@ -43,4 +76,19 @@ public class BoardItemView : MonoBehaviour, IBoardItemView
         spriteRenderer.sprite = sprite;
     }
 
+    public void OnSpawned()
+    {
+        Debug.Log("Spawned");
+        transform.DOKill();
+        isSelected = false;
+        transform.localScale = Vector3.one;
+    }
+
+    public void OnDespawned()
+    {
+        transform.DOKill();
+        Debug.Log("Despawned");
+        isSelected = false;
+        transform.localScale = Vector3.one;
+    }
 }
