@@ -12,14 +12,13 @@ public class BoardManager : MonoBehaviour, ICommandContext
     [SerializeField] private FeedbackPlayer feedbackPlayer;
     [SerializeField] private ParticleFeedback particleFeedback;
 
-    private Dictionary<(int, int), BoardItemView> boardItemViews = new Dictionary<(int, int), BoardItemView>();
+    private readonly Dictionary<(int, int), BoardItemView> boardItemViews = new Dictionary<(int, int), BoardItemView>();
     private IBoardItemViewFactory boardItemViewFactory;
     private Board board;
 
     // Configuration
-    private float boardItemSize = 2.5f;
-    private float xOffset => (width * boardItemSize) / 2f - boardItemSize / 2f;
-    private float yOffset => (height * boardItemSize) / 2f - boardItemSize / 2f;
+    private float xOffset => (width * GameConstants.BOARD_ITEM_SIZE) / 2f - GameConstants.BOARD_ITEM_SIZE / 2f;
+    private float yOffset => (height * GameConstants.BOARD_ITEM_SIZE) / 2f - GameConstants.BOARD_ITEM_SIZE / 2f;
     private int width => gameData.boardWidth;
     private int height => gameData.boardHeight;
 
@@ -80,7 +79,7 @@ public class BoardManager : MonoBehaviour, ICommandContext
 
     internal Vector3 GetCellWorldPosition(int x, int y)
     {
-        return new Vector3(x * boardItemSize - xOffset, y * boardItemSize - yOffset, -y);
+        return new Vector3(x * GameConstants.BOARD_ITEM_SIZE - xOffset, y * GameConstants.BOARD_ITEM_SIZE - yOffset, -y);
     }
 
     #endregion
@@ -107,7 +106,7 @@ public class BoardManager : MonoBehaviour, ICommandContext
 
     public (int x, int y) GetClosestCellPosition(Vector3 worldPos)
     {
-        var threshold = boardItemSize * boardItemSize * 0.25f;
+        var threshold = GameConstants.BOARD_ITEM_SIZE * GameConstants.BOARD_ITEM_SIZE * GameConstants.SELECTION_THRESHOLD;
         var closestCell = (-1, -1);
         var minDist = float.MaxValue;
 
@@ -189,7 +188,7 @@ public class BoardManager : MonoBehaviour, ICommandContext
     public void RefillBoard((int x, int y) finalPos, IBoardItem boardItem, float spawnY)
     {
         var view = CreateBoardItemViewAt(finalPos.x, finalPos.y, boardItem);
-        view.SetPosition(spawnY + finalPos.y * boardItemSize);
+        view.SetPosition(spawnY + finalPos.y * GameConstants.BOARD_ITEM_SIZE);
         view.FallTo(GetCellWorldPosition(finalPos.x, finalPos.y), 0f);
     }
 

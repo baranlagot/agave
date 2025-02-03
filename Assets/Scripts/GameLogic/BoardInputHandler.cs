@@ -9,7 +9,6 @@ public class BoardInputHandler : MonoBehaviour
 
     private Stack<BoardCell> selectedItems = new Stack<BoardCell>();
     private Stack<Vector3> selectedCellWorldPositions = new Stack<Vector3>();
-    private readonly int minSelectionCount = 3;
     private Color selectionColor = Color.red;
 
     private int moveCount;
@@ -58,7 +57,7 @@ public class BoardInputHandler : MonoBehaviour
         }
         else if (Input.GetMouseButtonUp(0))
         {
-            if (selectedItems.Count >= minSelectionCount)
+            if (selectedItems.Count >= GameConstants.MIN_SELECTION_COUNT)
             {
                 OnSelectionValid();
             }

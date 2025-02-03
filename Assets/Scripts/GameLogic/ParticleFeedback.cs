@@ -17,6 +17,6 @@ public class ParticleFeedback : Feedback
 
     protected override void CustomInitialize()
     {
-        psFactory = new PoolFactory<PoolableParticleSystem>(psPrefab, 10, transform);
+        psFactory = new PoolFactory<PoolableParticleSystem>(psPrefab, GameConstants.PARTICLE_POOL_SIZE, transform);
     }
 }

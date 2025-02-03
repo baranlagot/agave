@@ -5,11 +5,12 @@ using DG.Tweening;
 public class BoardItemView : MonoBehaviour, IBoardItemView, IPoolable
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
+    private const string SPRITE_RESOURCE_PATH = "Sprites/{0}";
+    private bool isSelected;
 
     public IBoardItem BoardItem { get; private set; }
     public IGameObjectFactory<BoardItemView> Factory { get; private set; }
 
-    private bool isSelected;
 
     public void Initialize(IBoardItem boardItem, IGameObjectFactory<BoardItemView> factory)
     {
@@ -28,19 +29,12 @@ public class BoardItemView : MonoBehaviour, IBoardItemView, IPoolable
         transform.DOMove(to, duration).SetEase(Ease.Linear);
     }
 
-    public void FallTo(Vector3 to, float delay)
+    public void FallTo(Vector3 targetPosition, float delay)
     {
-        var initialDelay = delay;
-        var fallDuration = 0.1f;
-        var bounceOvershoot = 0.1f;
-        var bounceDuration = 0.05f;
-
-        Sequence sequence = DOTween.Sequence();
-        sequence.AppendInterval(initialDelay);
-        sequence.Append(transform.DOMove(to, fallDuration).SetEase(Ease.InQuad));
-        Vector3 upPos = to + Vector3.up * bounceOvershoot;
-        sequence.Append(transform.DOMove(upPos, bounceDuration / 2).SetEase(Ease.OutQuad));
-        sequence.Append(transform.DOMove(to, bounceDuration / 2).SetEase(Ease.InQuad));
+        var sequence = DOTween.Sequence();
+        sequence.AppendInterval(delay)
+                .Append(transform.DOMove(targetPosition, GameConstants.FALL_DURATION).SetEase(Ease.InQuad))
+                .Append(GetBounceSequence(targetPosition));
     }
 
     public void SetSelected()
@@ -52,7 +46,7 @@ public class BoardItemView : MonoBehaviour, IBoardItemView, IPoolable
         else
         {
             isSelected = true;
-            transform.DOScale(Vector3.one * 1.05f, 0.1f);
+            transform.DOScale(Vector3.one * GameConstants.SELECTION_SCALE, GameConstants.SELECTION_ANIMATION_DURATION);
         }
     }
 
@@ -65,15 +59,8 @@ public class BoardItemView : MonoBehaviour, IBoardItemView, IPoolable
         else
         {
             isSelected = false;
-            transform.DOScale(Vector3.one, 0.1f);
+            transform.DOScale(Vector3.one, GameConstants.SELECTION_ANIMATION_DURATION);
         }
-    }
-
-    private void LoadSprite()
-    {
-        Debug.Log($"Loading sprite for {BoardItem.Name}");
-        var sprite = Resources.Load<Sprite>($"Sprites/{BoardItem.Name}");
-        spriteRenderer.sprite = sprite;
     }
 
     public void OnSpawned()
@@ -91,4 +78,23 @@ public class BoardItemView : MonoBehaviour, IBoardItemView, IPoolable
         isSelected = false;
         transform.localScale = Vector3.one;
     }
+
+    private void LoadSprite()
+    {
+        string spritePath = string.Format(SPRITE_RESOURCE_PATH, BoardItem.Name);
+        var sprite = Resources.Load<Sprite>(spritePath);
+        spriteRenderer.sprite = sprite;
+    }
+
+    private Sequence GetBounceSequence(Vector3 targetPosition)
+    {
+        Vector3 bouncePosition = targetPosition + Vector3.up * GameConstants.BOUNCE_OVERSHOOT;
+        float halfBounceDuration = GameConstants.BOUNCE_DURATION / 2;
+
+        return DOTween.Sequence()
+            .Append(transform.DOMove(bouncePosition, halfBounceDuration).SetEase(Ease.OutQuad))
+            .Append(transform.DOMove(targetPosition, halfBounceDuration).SetEase(Ease.InQuad));
+    }
+
+
 }
