@@ -66,7 +66,7 @@ public static class LinkCheckingSystem
             {
                 int nx = cx + d[0];
                 int ny = cy + d[1];
-                if (board.IsValid(nx, ny) && !visited[nx, ny])
+                if (board.IsValidPosition(nx, ny) && !visited[nx, ny])
                 {
                     var neighbor = board.GetCell(nx, ny);
                     if (!neighbor.IsEmpty && neighbor.boardItem.Color == board.GetCell(cx, cy).boardItem.Color)

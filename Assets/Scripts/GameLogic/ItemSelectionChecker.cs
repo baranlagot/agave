@@ -6,7 +6,7 @@ public static class ItemSelectionChecker
     public static bool CanSelectItem((int x, int y) boardPosition, Board board, BoardCell? lastSelectedCell)
     {
         // Check if the position is valid
-        if (!board.IsValid(boardPosition.x, boardPosition.y))
+        if (!board.IsValidPosition(boardPosition.x, boardPosition.y))
         {
             return false;
         }
