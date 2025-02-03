@@ -27,7 +27,7 @@ public static class RefillSystem
                 }
             }
         }
-
+        commands.Add(new CheckLinksCommand());
         return commands;
     }
 

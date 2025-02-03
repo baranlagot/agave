@@ -61,3 +61,13 @@ public class RefillBoardCommand : IBoardCommand
         context.RefillBoard(finalGridPos, boardItem, spawnY);
     }
 }
+
+public class CheckLinksCommand : IBoardCommand
+{
+    public string LogMessage => $"Checking links";
+
+    public void Execute(ICommandContext context)
+    {
+        context.CheckLinksRemaining();
+    }
+}

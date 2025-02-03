@@ -1,14 +1,14 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using BoardLogic;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 
 public class BoardManager : MonoBehaviour, ICommandContext
 {
-    [SerializeField] private int width = 8;
-    [SerializeField] private int height = 8;
+    [SerializeField] private GameData gameData;
+    private int width => gameData.boardWidth;
+    private int height => gameData.boardHeight;
     [SerializeField] private BoardItemView boardItemViewPrefab;
     [SerializeField] private GameObject backgroundTilePrefab;
     [SerializeField] private FeedbackPlayer feedbackPlayer;
@@ -59,16 +59,22 @@ public class BoardManager : MonoBehaviour, ICommandContext
     private void CreateBackgroundImageAt(int x, int y)
     {
         var worldPosition = GetCellWorldPosition(x, y);
-        //so that they are always in the background
-        worldPosition.z = 100;
         Instantiate(backgroundTilePrefab, worldPosition, Quaternion.identity, transform);
+    }
+
+    private IEnumerator DelayRoutine(float delayAmount, Action action)
+    {
+        yield return new WaitForSeconds(delayAmount);
+        action?.Invoke();
     }
 
     private void ShuffleBoard()
     {
-        Debug.Log("Shuffling board");
-        var shuffleResults = board.ShuffleBoard();
-        ProcessShuffleResults(shuffleResults);
+        StartCoroutine(DelayRoutine(2f, () =>
+        {
+            var shuffleResults = board.ShuffleBoard();
+            ProcessShuffleResults(shuffleResults);
+        }));
     }
 
     private void ProcessShuffleResults(ShuffleResults results)
@@ -120,7 +126,7 @@ public class BoardManager : MonoBehaviour, ICommandContext
     {
         (int, int) closestCell = (-1, -1);
         var minDist = float.MaxValue;
-        var threshold = boardItemSize * boardItemSize * 0.5f;
+        var threshold = boardItemSize * boardItemSize * 0.25f;
 
         foreach (var item in boardItemViews)
         {
@@ -223,8 +229,10 @@ public class BoardManager : MonoBehaviour, ICommandContext
         var boardItemView = CreateBoardItemViewAt(finalPos.x, finalPos.y, boardItem);
         boardItemView.SetPosition(spawnY + finalPos.y * boardItemSize);
         boardItemView.FallTo(GetCellWorldPosition(finalPos.x, finalPos.y), 0f);
+    }
 
-        //after every refill, check if no more matches are possible
+    public void CheckLinksRemaining()
+    {
         var anyLinksRemaining = LinkCheckingSystem.CheckLinks(board);
         if (!anyLinksRemaining)
         {

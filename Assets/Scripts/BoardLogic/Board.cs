@@ -92,7 +92,11 @@ namespace BoardLogic
                     }
                 }
             }
-
+            var isLinked = LinkCheckingSystem.CheckLinks(this);
+            if (!isLinked)
+            {
+                return ShuffleBoard();
+            }
             return new ShuffleResults(oldPositions, newPositions);
         }
 
