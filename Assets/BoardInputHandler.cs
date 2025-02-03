@@ -5,11 +5,26 @@ using UnityEngine;
 public class BoardInputHandler : MonoBehaviour
 {
     [SerializeField] private BoardManager boardManager;
+    [SerializeField] private GameData gameData;
 
     private Stack<BoardCell> selectedItems = new Stack<BoardCell>();
     private Stack<Vector3> selectedCellWorldPositions = new Stack<Vector3>();
     private readonly int minSelectionCount = 3;
     private Color selectionColor = Color.red;
+
+    private int moveCount;
+    private int scoreCount;
+
+    private void Awake()
+    {
+        scoreCount = 0;
+        moveCount = gameData.moveCount;
+    }
+
+    private void Start()
+    {
+        EventManager.Publish<OnMoveChangedEvent>(new OnMoveChangedEvent(moveCount, scoreCount));
+    }
 
     private void Update()
     {
@@ -60,6 +75,9 @@ public class BoardInputHandler : MonoBehaviour
 
     private void OnSelectionValid()
     {
+        moveCount--;
+        scoreCount += selectedItems.Count;
+
         //convert selected items to commands, first execute deletion commands
         var commands = SelectionResultConverter.ConvertToSelectionResult(selectedItems);
         boardManager.ExecuteCommands(commands);
@@ -70,6 +88,9 @@ public class BoardInputHandler : MonoBehaviour
         var refillCommands = RefillSystem.ApplyRefill(boardManager.GetBoard());
         boardManager.ExecuteCommands(refillCommands);
 
+
+        Debug.Log("Score Count: " + scoreCount);
+        EventManager.Publish<OnMoveChangedEvent>(new OnMoveChangedEvent(moveCount, scoreCount));
     }
 
 }
