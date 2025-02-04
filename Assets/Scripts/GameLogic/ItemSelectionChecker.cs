@@ -1,6 +1,9 @@
 using BoardLogic;
 using UnityEngine;
 
+/// <summary>
+/// Checks if an item can be selected.
+/// </summary>
 public static class ItemSelectionChecker
 {
     public static bool CanSelectItem((int x, int y) boardPosition, Board board, BoardCell? lastSelectedCell)

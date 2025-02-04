@@ -3,8 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using BoardLogic;
 
+/// <summary>
+/// Refills the board with new items.
+/// </summary>
 public static class RefillSystem
 {
+    /// <summary>
+    /// Applies the refill to the board.
+    /// </summary>
+    /// <param name="board">The board to refill.</param>
+    /// <returns>The commands to apply the refill.</returns>
     public static List<IBoardCommand> ApplyRefill(Board board)
     {
         var commands = new List<IBoardCommand>();
@@ -31,6 +39,10 @@ public static class RefillSystem
         return commands;
     }
 
+    /// <summary>
+    /// Gets a random board item color.
+    /// </summary>
+    /// <returns>A random board item color.</returns>
     private static BoardItemColor GetRandomBoardItemColor()
     {
         var colors = Enum.GetValues(typeof(BoardItemColor)).Cast<BoardItemColor>().ToList();

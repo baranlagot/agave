@@ -4,6 +4,10 @@ using System.Linq;
 
 namespace BoardLogic
 {
+
+    /// <summary>
+    /// Represents the game board.
+    /// </summary>
     public class Board
     {
         private readonly BoardCell[,] cells;
@@ -15,6 +19,11 @@ namespace BoardLogic
         private const int DEFAULT_COLOR_COUNT = 4;
         private const int MIN_BOARD_SIZE = 3;
 
+        /// <summary>
+        /// Initializes a new instance of the Board class.
+        /// </summary>
+        /// <param name="width">The width of the board.</param>
+        /// <param name="height">The height of the board.</param>
         public Board(int width, int height)
         {
             ValidateBoardDimensions(width, height);
@@ -25,24 +34,45 @@ namespace BoardLogic
             random = new Random();
         }
 
+        /// <summary>
+        /// Gets the cell at the specified coordinates.
+        /// </summary>
+        /// <param name="x">The x-coordinate of the cell.</param>
+        /// <param name="y">The y-coordinate of the cell.</param>
+        /// <returns>The cell at the specified coordinates.</returns>   
         public BoardCell GetCell(int x, int y)
         {
             ValidatePosition(x, y);
             return cells[x, y];
         }
 
+        /// <summary>
+        /// Sets the cell at the specified coordinates.
+        /// </summary>
+        /// <param name="x">The x-coordinate of the cell.</param>
+        /// <param name="y">The y-coordinate of the cell.</param>
+        /// <param name="cell">The cell to set.</param>
         public void SetCell(int x, int y, BoardCell cell)
         {
             ValidatePosition(x, y);
             cells[x, y] = cell;
         }
 
+        /// <summary>
+        /// Checks if the specified position is valid.
+        /// </summary>
+        /// <param name="x">The x-coordinate of the position.</param>
+        /// <param name="y">The y-coordinate of the position.</param>
+        /// <returns>True if the position is valid, false otherwise.</returns>
         public bool IsValidPosition(int x, int y)
         {
             return x >= 0 && x < Width && y >= 0 && y < Height;
         }
 
-        // Fill with random colors
+        /// <summary>
+        /// Initializes the board with random colors.
+        /// </summary>
+        /// <param name="colorCount">The number of colors to use.</param>
         public void InitializeRandom(int colorCount = DEFAULT_COLOR_COUNT)
         {
             Random rnd = new Random();
@@ -57,6 +87,10 @@ namespace BoardLogic
             }
         }
 
+        /// <summary>
+        /// Shuffles the board.
+        /// </summary>
+        /// <returns>The results of the shuffle.</returns>
         public ShuffleResults ShuffleBoard()
         {
             var oldPositions = new List<(int x, int y)>();
@@ -104,15 +138,6 @@ namespace BoardLogic
                 throw new ArgumentException(
                     $"Board dimensions must be at least {MIN_BOARD_SIZE}x{MIN_BOARD_SIZE}. " +
                     $"Provided: {width}x{height}");
-            }
-        }
-
-        private void ValidateColorCount(int colorCount)
-        {
-            if (colorCount <= 1)
-            {
-                throw new ArgumentException(
-                    $"Color count must be greater than 1. Provided: {colorCount}");
             }
         }
 

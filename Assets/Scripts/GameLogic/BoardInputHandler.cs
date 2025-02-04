@@ -38,13 +38,14 @@ public class BoardInputHandler : MonoBehaviour
 
             var boardCellValue = boardCell.Value;
             BoardCell? lastSelectedCell = selectedItems.Count > 0 ? selectedItems.Peek() : (BoardCell?)null;
-            if (ItemSelectionChecker.CanSelectItem(boardCellValue.BoardPosition, boardManager.GetBoard(), lastSelectedCell) && !selectedItems.Contains(boardCellValue))
+
+            if (ItemSelectionChecker.CanSelectItem(boardCellValue.BoardPosition, boardManager.GetBoard(), lastSelectedCell) && !selectedItems.Contains(boardCellValue))//check if the cell can be selected && the cell is not already selected
             {
                 selectionColor = BoardManager.GetColorFromBoardItem(boardCellValue.boardItem);
-                selectedItems.Push(boardCellValue);
-                selectedCellWorldPositions.Push(boardManager.GetCellWorldPosition(boardCellValue.BoardPosition.x, boardCellValue.BoardPosition.y));
+                selectedItems.Push(boardCellValue); //add the cell to the selected items stack
+                selectedCellWorldPositions.Push(boardManager.GetCellWorldPosition(boardCellValue.BoardPosition.x, boardCellValue.BoardPosition.y)); //add the cell's world position to the selected cell world positions stack
             }
-            else if (selectedItems.Contains(boardCellValue))
+            else if (selectedItems.Contains(boardCellValue)) //if the cell is already selected
             {
                 boardManager.ClearSelectedItems();
                 if (!selectedItems.Peek().Equals(boardCellValue))
@@ -57,7 +58,7 @@ public class BoardInputHandler : MonoBehaviour
         }
         else if (Input.GetMouseButtonUp(0))
         {
-            if (selectedItems.Count >= GameConstants.MIN_SELECTION_COUNT)
+            if (selectedItems.Count >= GameConstants.MIN_SELECTION_COUNT)//if the number of selected items is greater than the minimum selection count
             {
                 OnSelectionValid();
             }
@@ -81,14 +82,15 @@ public class BoardInputHandler : MonoBehaviour
         var commands = SelectionResultConverter.ConvertToSelectionResult(selectedItems);
         boardManager.ExecuteCommands(commands);
 
+        //apply gravity to the board
         var gravityCommands = GravitySystem.ApplyGravity(boardManager.GetBoard());
         boardManager.ExecuteCommands(gravityCommands);
 
+        //refill the board
         var refillCommands = RefillSystem.ApplyRefill(boardManager.GetBoard());
         boardManager.ExecuteCommands(refillCommands);
 
-
-        Debug.Log("Score Count: " + scoreCount);
+        //update the move count and score
         EventManager.Publish<OnMoveChangedEvent>(new OnMoveChangedEvent(moveCount, scoreCount));
     }
 

@@ -1,10 +1,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Draws a line on the board.
+/// </summary>
 public static class LineDrawer
 {
     private static LineRenderer _lineRenderer;
 
+    /// <summary>
+    /// Draws a line on the board.
+    /// </summary>
+    /// <param name="cellWorldPositions">The positions of the cells to draw the line on.</param>
+    /// <param name="color">The color of the line.</param>
     public static void DrawLine(Stack<Vector3> cellWorldPositions, Color color)
     {
         if (_lineRenderer == null)

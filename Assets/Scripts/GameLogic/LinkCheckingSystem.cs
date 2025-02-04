@@ -1,8 +1,16 @@
 using System.Collections.Generic;
 using BoardLogic;
 
+/// <summary>
+/// Checks for links in the board.
+/// </summary>
 public static class LinkCheckingSystem
 {
+    /// <summary>
+    /// Checks for links in the board.
+    /// </summary>
+    /// <param name="board">The board to check.</param>
+    /// <returns>True if there are links, false otherwise.</returns>
     public static bool CheckLinks(Board board)
     {
         var linkedMinLimit = 3;

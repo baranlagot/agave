@@ -1,8 +1,16 @@
 using System.Collections.Generic;
 using BoardLogic;
 
+/// <summary>
+/// Applies gravity to the board.
+/// </summary>
 public static class GravitySystem
 {
+    /// <summary>
+    /// Applies gravity to the board.
+    /// </summary>
+    /// <param name="board">The board to apply gravity to.</param>
+    /// <returns>The commands to apply gravity.</returns>
     public static List<IBoardCommand> ApplyGravity(Board board)
     {
         var commands = new List<IBoardCommand>();

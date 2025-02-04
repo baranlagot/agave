@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using BoardLogic;
 using UnityEngine;
 
+/// <summary>
+/// Manages the board and its visual representation.
+/// </summary>
 public class BoardManager : MonoBehaviour, ICommandContext
 {
     [SerializeField] private GameData gameData;
@@ -88,6 +91,11 @@ public class BoardManager : MonoBehaviour, ICommandContext
 
     public Board GetBoard() => board;
 
+    /// <summary>
+    /// Gets the board cell from the mouse position.
+    /// </summary>
+    /// <param name="mousePosition">The position of the mouse in the world.</param>
+    /// <returns>The board cell at the mouse position.</returns>
     public BoardCell? GetBoardCellFromMousePosition(Vector3 mousePosition)
     {
         var boardPosition = GetClosestCellPosition(mousePosition);
@@ -104,6 +112,11 @@ public class BoardManager : MonoBehaviour, ICommandContext
                position.y >= 0 && position.y < height;
     }
 
+    /// <summary>
+    /// Gets the closest board cell position to the world position.
+    /// </summary>
+    /// <param name="worldPos">The position of the world.</param>
+    /// <returns>The board cell at the mouse position.</returns>
     public (int x, int y) GetClosestCellPosition(Vector3 worldPos)
     {
         var threshold = GameConstants.BOARD_ITEM_SIZE * GameConstants.BOARD_ITEM_SIZE * GameConstants.SELECTION_THRESHOLD;
@@ -127,6 +140,10 @@ public class BoardManager : MonoBehaviour, ICommandContext
 
     #region Selection Handling
 
+    /// <summary>
+    /// Sets the selected items.
+    /// </summary>
+    /// <param name="selectedItems">The selected items.</param>
     public void SetSelectedItems(Stack<BoardCell> selectedItems)
     {
         foreach (var item in selectedItems)
@@ -138,6 +155,9 @@ public class BoardManager : MonoBehaviour, ICommandContext
         }
     }
 
+    /// <summary>
+    /// Clears the selected items.
+    /// </summary>
     public void ClearSelectedItems()
     {
         foreach (var view in boardItemViews.Values)
@@ -150,6 +170,10 @@ public class BoardManager : MonoBehaviour, ICommandContext
 
     #region Command Execution
 
+    /// <summary>
+    /// Executes the commands.
+    /// </summary>
+    /// <param name="commands">The commands to execute.</param>
     public void ExecuteCommands(List<IBoardCommand> commands)
     {
         foreach (var command in commands)
@@ -210,6 +234,11 @@ public class BoardManager : MonoBehaviour, ICommandContext
         feedbackPlayer.Play(view.transform.position);
     }
 
+    /// <summary>
+    /// Gets the color from the board item.
+    /// </summary>
+    /// <param name="boardItem">The board item.</param>
+    /// <returns>The color of the board item.</returns>
     public static Color GetColorFromBoardItem(IBoardItem boardItem) => boardItem.Color switch
     {
         BoardItemColor.Blue => Color.blue,
